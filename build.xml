@@ -1,0 +1,92 @@
+<project name="CreationEvent" basedir="." default="distributive">
+	<property environment="env" />
+
+	<property name="project.basedir" value="${basedir}" />
+
+	<property name="src" value="${project.basedir}/src" />
+	<property name="lib" value="${project.basedir}/libs" />
+
+	<property name="buildVersion" value="1.0" />
+	<property name="copyright" value="INFOR, LTD." />
+
+	<property name="dist" value="${project.basedir}/dist" />
+	<property name="build" value="${dist}/classes" />
+
+	<path id="app.classpath">
+		<fileset dir="${lib}">
+			<include name="*.jar" />
+		</fileset>
+		<path path="${build}">
+		</path>
+	</path>
+
+	<pathconvert property="app.classpath.manifest" pathsep=" lib//">
+		<path refid="app.classpath" />
+		<flattenmapper />
+	</pathconvert>
+
+	<target name="distributive" depends="createJAR">
+		<mkdir dir="${dist}/lib" />
+		<copy todir="${dist}/lib">
+			<fileset dir="${lib}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		<copy file="${basedir}/___start.bat" todir="${dist}">
+		</copy>
+		<mkdir dir="${dist}/config" />
+		<copy todir="${dist}/config">
+			<fileset dir="${project.basedir}/config">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<delete dir="${build}" />
+
+		<zip destfile="${dist}/${ant.project.name}_ver${buildVersion}_dist.zip">
+			<fileset dir="${dist}" />
+		</zip>
+
+		<delete file="${dist}/${ant.project.name}.jar" failonerror="false" />
+		<delete dir="${dist}/lib" failonerror="false" />
+	</target>
+
+	<target name="createJAR" depends="compile">
+		<jar destfile="${dist}/${ant.project.name}.jar">
+			<fileset dir="${build}">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${src}">
+				<include name="config/**/*" />
+			</fileset>
+			<manifest>
+				<attribute name="Main-Class" value="ru.infor.common.application.Import_App" />
+				<attribute name="Implementation-Vendor" value="${copyright}" />
+				<attribute name="Implementation-Version" value="${buildVersion}" />
+				<attribute name="Class-Path" value="lib//${app.classpath.manifest}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="compile" depends="init">
+		<javac srcdir="${src}" destdir="${build}" debug="true" source="1.6" target="1.6" encoding="UTF-8">
+			<classpath refid="app.classpath" />
+		</javac>
+	</target>
+
+	<target name="init" depends="clean">
+		<!-- Create the time stamp -->
+		<tstamp />
+
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${dist}" />
+		<mkdir dir="${build}" />
+	</target>
+
+	<target name="clean">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+
+</project>
