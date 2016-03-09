@@ -1,0 +1,1 @@
+java -Dcommon.props.folder=config -jar CreationEvent.jar
