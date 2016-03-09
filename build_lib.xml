@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<project name="export-for-transmaster" default="build" basedir=".">
+	<property environment="env" />
+	<property file="ant/PluginVersion.props" /> 
+	<property name="buildVersion" value="1.19" />
+	<property name="copyright" value="BLOK, LTD." />
+	
+	<property name="build.dir" value="${basedir}/build" />
+	<property name="dist" value="dist" />
+
+	<path id="classpath">
+		<fileset dir="${basedir}/build/">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${basedir}/libs/">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="build" depends="all.build">
+		<jar jarfile="${build.dir}/${ant.project.name}.jar">
+			<fileset dir="${build.dir}">
+				<include name="**/FileByte.*" />
+				<include name="**/NDDataExt.*" />
+				<include name="**/WriterNDData.*" />
+			</fileset>
+			<manifest>
+				<attribute name="Implementation-Vendor" value="${copyright}" />
+				<attribute name="Implementation-Version" value="${buildVersion}" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="all.build" depends="init">
+		<javac srcdir="${basedir}/src" destdir="${build.dir}" debug="on" deprecation="on" optimize="off" source="1.6" target="1.6" encoding="UTF-8">
+			<classpath refid="classpath" />
+		</javac>
+		<copy todir="${build.dir}">
+			<fileset dir="${basedir}/src">
+				<exclude name="**/**.java"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="init" depends="clean">
+		<mkdir dir="${build.dir}" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+</project>
