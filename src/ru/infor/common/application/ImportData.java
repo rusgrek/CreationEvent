@@ -64,7 +64,7 @@ public class ImportData {
 		conn = ServicesConnection.getConnection("vms-ws");
 		context.setUserName("admin");
 		context.setPassword(SecurityUtils.encrypt("adminadmin".getBytes()));
-		context.setInitiator("Test creattion event (Java) ");
+		context.setInitiator("Test creattion event for radiobeacon (Java) ");
 		writeLog("Current settings (ver. 1.0): ", 1);
 		writeLog("       vms-ws.soap.services.url = " + ConfigProperties.getProperty("vms-ws.soap.services.url", ""),
 				1);
